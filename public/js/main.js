@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('heroNext').addEventListener('click', () => showHero(heroIndex + 1, 1));
 
   // auto-advance every 7s, pausing on hover
-  let auto = setInterval(() => showHero(heroIndex + 1, 1), 7000);
+  let auto = setInterval(() => showHero(heroIndex + 1, 1), 10000);
   heroSection.addEventListener('mouseenter', () => clearInterval(auto));
   heroSection.addEventListener('mouseleave', () => { auto = setInterval(() => showHero(heroIndex + 1, 1), 7000); });
 });
