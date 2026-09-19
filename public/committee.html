@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Committee - Imperial College Symphony Orchestra</title>
+<meta name="description" content="Meet the elected ICSO committee.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="icon" type="image/png" href="/assets/icso-logo.jpg">
+</head>
+<body data-page="committee">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site" id="site-header">
+  <div class="nav-row">
+    <a class="brand" href="/" id="brandLink" data-page="committee">
+      <img src="/assets/ICSOText-1.png" alt="">
+      <span class="brand-text">Imperial College Symphony Orchestra<small>Entertaining the masses since 1948</small></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="main">
+      <ul>
+        <li><a href="/" >Home</a></li>
+        <li><a href="/about" >About</a></li>
+        <li><a href="/concerts" >Concerts</a></li>
+        <li><a href="/gallery" >Gallery</a></li>
+        <li><a href="/join" >Join</a></li>
+        <li><a href="/support" >Support</a></li>
+        <li><a href="/committee" aria-current=&#34;page&#34;>Committee</a></li>
+        <li><a href="/contact" >Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+<main id="main">
+  <section class="hero" style="padding:64px 0; background-image: url('/assets/icso-background.jpg');">
+    <div class="wrap">
+      <p class="eyebrow">Election results</p>
+      <h1>Committee</h1>
+      <p class="lede"> View the elected ICSO committee for 2026/27 below.</p>
+    </div>
+  </section>
+
+  <section class="tight">
+    <div class="wrap">
+      <div class="grid cols-3" id="committee"></div>
+    </div>
+  </section>
+</main>
+
+
+<footer class="site" id="site-footer">
+  <div class="wrap">
+    <p>© <span id="year"></span> Imperial College Symphony Orchestra. All rights reserved.</p>
+  </div>
+</footer>
+<script src="/js/main.js"></script>
+
+<script>
+const committee = [
+  ["Chair", [["Benjamin Cummings","Joint Maths & Computing, Year 4 | Cello"]]],
+  ["Vice Chair", [["Kaelyn Soh","Chemistry, Year 3 | Violin"]]],
+  ["Treasurer", [["Mark Pearce","Mathematics, Year 2 | Clarinet"]]],
+  ["Secretary & Tour Manager", [["Eric Liu","Materials Science & Engineering, Year 2 | Cello"]]],
+  ["Librarian", [["Lucas Pigott","Mathematics, PhD Year 2 | Violin"]]],
+  ["Publicity Manager", [["Katherine Baker","Biology, Year 2 | Violin"]]],
+  ["Social Secretaries", [["Kasper Vermeesch","Mathematics, Year 3 | Violin"],["Luca White","Mathematics, Year 3 | Cello"]]],
+  ["Hall Manager", [["Eva Liu","Medical Biosciences, Year 2 | Percussion"]]],
+  ["Ticket Officer", [["Emma Owen","Mechanical Engineering, Year 2 | French Horn"]]],
+  ["Fundraising Officer", [["Natalie Wong","Mechanical Engineering, Year 2 | Viola"]]],
+  ["Web Editor", [["Bert Chun Chang","Computing, Year 2 | Trumpet"]]],
+];
+
+// Pre-paired {background, text} combos from the ICSO palette — contrast is guaranteed
+// because each pairing is hand-picked, not computed.
+const palettes = [
+  { bg:'#101E2B', text:'#F3EFE4', soft:'rgba(243,239,228,.72)', eyebrow:'#D8B778', border:'rgba(243,239,228,.15)' }, // ink
+  { bg:'#14293B', text:'#F3EFE4', soft:'rgba(243,239,228,.72)', eyebrow:'#D8B778', border:'rgba(243,239,228,.15)' }, // deep navy
+  { bg:'#1C3247', text:'#F3EFE4', soft:'rgba(243,239,228,.72)', eyebrow:'#D8B778', border:'rgba(243,239,228,.15)' }, // ink-soft
+  { bg:'#234055', text:'#F3EFE4', soft:'rgba(243,239,228,.74)', eyebrow:'#D8B778', border:'rgba(243,239,228,.16)' }, // slate blue
+];
+// Assign one palette per card, capped at 3 uses of any colour
+// (with 11 cards and 3 colours, at least one repeat is guaranteed automatically)
+function assignPalettes(n, maxPerColour = 3) {
+  const counts = new Array(palettes.length).fill(0);
+  const assignment = [];
+  for (let i = 0; i < n; i++) {
+    let idx, attempts = 0;
+    do {
+      idx = Math.floor(Math.random() * palettes.length);
+      attempts++;
+    } while (counts[idx] >= maxPerColour && attempts < 200);
+    counts[idx]++;
+    assignment.push(palettes[idx]);
+  }
+  return assignment;
+}
+const cardPalettes = assignPalettes(committee.length);
+
+document.getElementById('committee').innerHTML = committee.map(([role, people], i) => {
+  const p = cardPalettes[i];
+  return `
+  <div class="card reveal" style="transition-delay:${i * 15}ms; background:${p.bg}; border-color:${p.border};">
+    <p class="eyebrow" style="margin-bottom:10px; color:${p.eyebrow};">${role}</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      ${people.map(([name,instrument]) => `
+        <div class="person">
+            <div>
+                <p style="margin:0;font-weight:600;color:${p.text};">${name}</p>
+                ${instrument ? `<p style="margin:2px 0 0;font-size:.85rem;color:${p.soft};line-height:1.4;">${instrument.split('|').map(s => s.trim()).join('<br>')}</p>` : ''}
+            </div>
+        </div>`).join(`<hr style="border:0;border-top:1px solid ${p.border};margin:0;">`)}
+    </div>
+  </div>`;
+}).join('');
+window.initReveal && window.initReveal();
+</script>
+</body>
+</html>
