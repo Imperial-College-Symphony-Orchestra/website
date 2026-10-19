@@ -833,3 +833,86 @@ footer {
   min-height: 0 !important;
   height: auto !important;
 }
+
+/* ---- Slide-1 poster block (lives inside the slide, so it moves with it) ---- */
+#heroCarousel .wrap{pointer-events:none;}                /* idle wrapper can't block clicks */
+#heroCarousel .wrap.has-extras > :not(.hero-extras){display:none !important;}  /* hide old heading/text */
+
+.hero-extras{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center; gap:64px;
+  padding:0 96px;                    /* keeps clear of the ‹ › arrows */
+}
+.hero-extras a{pointer-events:auto;}
+
+.extras-info{max-width:420px; color:#fff;}
+.extras-kicker{
+  margin:0 0 10px; font:700 .75rem 'Source Sans 3',sans-serif;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--brass-light);
+}
+.extras-title{
+  margin:0 0 14px; font-family:'Fraunces',serif; font-weight:600;
+  font-size:clamp(2rem,3.4vw,3rem); line-height:1.08; color:#fff;
+}
+.extras-venue{margin:0 0 18px; color:#EDE6D2; font-size:1.05rem; line-height:1.5;}
+.extras-prog{
+  list-style:none; margin:0 0 28px; padding:0 0 0 16px;
+  border-left:2px solid var(--brass);
+  color:#EDE6D2; font-size:.98rem; line-height:1.5;
+}
+.extras-prog li{margin-bottom:6px;}
+.extras-prog li:last-child{margin-bottom:0;}
+.extras-prog b{color:#fff; font-weight:600;}
+
+.btn-buy{
+  font-size:1rem; padding:14px 32px;
+  letter-spacing:.06em; text-transform:uppercase; white-space:nowrap;
+  box-shadow:0 10px 26px rgba(0,0,0,.35);
+}
+
+.hero-poster{
+  display:block; flex:none;
+  height:440px; aspect-ratio:3/4;
+  overflow:hidden; border-radius:4px;
+  border:1px solid rgba(255,255,255,.35);
+  background:rgba(16,30,43,.6);
+  box-shadow:0 18px 40px rgba(0,0,0,.5);
+}
+.hero-poster img{width:100%; height:100%; object-fit:cover;}
+
+@media(min-width:901px){
+  #heroCarousel{min-height:560px;}
+}
+@media(min-width:901px) and (max-width:1150px){
+  .hero-extras{gap:40px; padding:0 84px;}
+  .extras-info{max-width:340px;}
+  .hero-poster{height:400px;}
+}
+
+/* Tablet/phone: poster on top, Buy button underneath, info text hidden */
+@media(max-width:900px){
+  .hero-extras{flex-direction:column; gap:18px; padding:24px 28px 64px;}  /* 64px clears arrows and dots */
+  .hero-poster{order:1; height:auto; width:min(230px,60vw);}
+  .extras-info{order:2; max-width:none;}
+  .extras-info > :not(.btn){display:none;}
+  .btn-buy{font-size:.95rem; padding:12px 28px;}
+}
+
+/* Fade the slide-1 text in like the other slides (soft rise, staggered per line) */
+@keyframes extrasIn{
+  from{opacity:0; transform:translateY(.5em) rotate(1deg);}
+  to{opacity:1; transform:none;}
+}
+.extras-info{--d:.3s;}                       /* base delay: raise it if the text shows up before the slide has settled */
+.extras-info > *{
+  animation:extrasIn .6s var(--ease) backwards;
+  animation-delay:var(--d);
+}
+.extras-info > :nth-child(2){animation-delay:calc(var(--d) + .12s);}
+.extras-info > :nth-child(3){animation-delay:calc(var(--d) + .24s);}
+.extras-info > :nth-child(4){animation-delay:calc(var(--d) + .36s);}
+.extras-info > :nth-child(5){animation-delay:calc(var(--d) + .48s);}
+
+@media(prefers-reduced-motion:reduce){
+  .extras-info > *{animation:none;}
+}

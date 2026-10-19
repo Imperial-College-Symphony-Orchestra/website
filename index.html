@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="/css/style.css">
 <link rel="icon" type="image/png" href="/assets/icso-logo.jpg">
+<link rel="preload" as="image" href="/assets/romance-reverie-poster.jpg">
 </head>
 <body data-page="home">
 <div id="introOverlay" aria-hidden="true">
@@ -159,7 +160,7 @@
 
   <script>
   const heroSlides = [
-    { img:'/assets/2026-windsor-war-requiem-britten (7) v2.jpg', eyebrow:'Next concert • 22 November 2026', title:'Winter Concert', lede:"<b>Sunday 22 November 2026: Amaryllis Fleming Hall (Royal College of Music)</b><br>Performing <i>Prelude to Act 1</i> of Wagner's <i>Lohengrin</i>, Elgar's <i>Cello Concerto</i> (Ben Cummings, cello), and Rachmaninoff's <i>Symphony No. 2</i>. Tickets released soon!<br><br>Want to join ICSO? <a href='/join'>View our FAQs</a>." },
+    { img:'/assets/2025-dec-rcm-kaelyn-soh-playing-korngold-violin-concerto.jpg', eyebrow:'Next concert • 22 November 2026', title:'Winter Concert', extras:true, lede:"..." },
     { img:'/assets/2026-jun-summer-concert-3.jpeg', eyebrow:'Past highlight • June 2026', title:'Tour to Belgium', lede:"ICSO teamed up with London-based, Belgian, and Spanish university orchestras for concerts in Ghent. The amassed orchestra welcome back Robyn Liu (cello), bringing the ICSO summer repertoire and tour energy to their week abroad amidst the June heatwave." },
     { img:'/assets/2026-jun-summer-concert.jpeg', eyebrow:'Past highlight • June 2026', title:'Summer Concert', lede:"Featuring 4th-year biomedical engineer Robyn Liu on cello, ICSO takes to St Stephen's Church, Gloucester Road for their summer concert: Giminéz's <i>Intermedio</i> from <i>La Boda de Luis Alonso</i>, Dvořák's <i>Cello Concerto</i>, and Rimsky-Korsakov's <i>Capriccio Espagnol</i>." },
     { img:'/assets/2026-windsor-war-requiem-britten (1).jpg', eyebrow:'Past highlight • 28 February 2026', title:"Britten: War Requiem", lede:"ICSO joins with Imperial College Choirs, Coventry Cathedral Chorus, Orpheus Sinfonia, the Choristers of St George's Chapel and solo voices to perform Benjamin Britten's pacifist masterwork at St George's Chapel, Windsor Castle (including performing to HRH The Duke of Edinburgh and the German Ambassador to the UK)." },
@@ -280,6 +281,51 @@ window.__heroPreloaded = heroSlides.map(slide => {
 
   return div;
 });
+</script>
+
+<template id="heroExtrasTpl">
+  <div class="hero-extras">
+    <div class="extras-info">
+      <p class="extras-kicker">Next concert · November 2026</p>
+      <p class="extras-title">Romance &amp; Reverie</p>
+      <p class="extras-venue">Amaryllis Fleming Hall, Royal College of Music<br>Sunday 22 November 2026 · Doors 19:00 · Starts 19:30</p>
+      <ul class="extras-prog">
+        <li><b>Wagner</b> Prelude to Act I of <i>Lohengrin</i></li>
+        <li><b>Elgar</b> Cello Concerto (Benjamin Cummings, cello)</li>
+        <li><b>Rachmaninoff</b> Symphony No. 2</li>
+      </ul>
+      <a class="btn btn-buy" href="https://www.imperialcollegeunion.org/student-group-shop?groupId=126" target="_blank" rel="noopener">Get your early bird tickets now</a>
+    </div>
+    <a class="hero-poster" href="/assets/romance-reverie-poster.jpg" target="_blank" rel="noopener" aria-label="Open the Romance &amp; Reverie poster full size">
+      <img src="/assets/romance-reverie-poster.jpg" alt="Poster for Romance &amp; Reverie: Wagner, Elgar and Rachmaninoff, Sunday 22 November, Amaryllis Fleming Hall" width="900" height="1200">
+    </a>
+  </div>
+</template>
+
+<script>
+(function(){
+  const tpl = document.getElementById('heroExtrasTpl');
+  const wraps = [document.getElementById('heroWrapA'), document.getElementById('heroWrapB')];
+  const target = (window.__heroSlides || []).find(s => s.extras);
+  if(!tpl || !target || wraps.some(w => !w)) return;
+  const norm = s => (s || '').replace(/\s+/g,'').toLowerCase();
+
+  function check(w){
+    const h1 = w.querySelector('h1');
+    const match = !!h1 && norm(h1.textContent) === norm(target.title);
+    const existing = w.querySelector('.hero-extras');
+    w.classList.toggle('has-extras', match);       // always in sync, even if the block is already gone
+    if(match && !existing){
+      w.appendChild(tpl.content.cloneNode(true));
+    }else if(!match && existing){
+      existing.remove();
+    }
+  }
+  wraps.forEach(w => {
+    new MutationObserver(() => check(w)).observe(w, {childList:true, subtree:true, characterData:true});
+    check(w);
+  });
+})();
 </script>
 </body>
 </html>
