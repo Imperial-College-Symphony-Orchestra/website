@@ -841,11 +841,11 @@ footer {
 .hero-extras{
   position:absolute; inset:0;
   display:flex; align-items:center; justify-content:center; gap:64px;
-  padding:0 96px;                    /* keeps clear of the ‹ › arrows */
+  padding:0 96px 0 150px;;                    /* keeps clear of the ‹ › arrows */
 }
 .hero-extras a{pointer-events:auto;}
 
-.extras-info{max-width:420px; color:#fff;}
+.extras-info{max-width:500px; color:#fff;}
 .extras-kicker{
   margin:0 0 10px; font:700 .75rem 'Source Sans 3',sans-serif;
   letter-spacing:.14em; text-transform:uppercase; color:var(--brass-light);
@@ -884,8 +884,8 @@ footer {
   #heroCarousel{min-height:560px;}
 }
 @media(min-width:901px) and (max-width:1150px){
-  .hero-extras{gap:40px; padding:0 84px;}
-  .extras-info{max-width:340px;}
+  .hero-extras{gap:40px; padding:0 84px 0 120px;}
+  .extras-info{max-width:400px;}
   .hero-poster{height:400px;}
 }
 
@@ -915,4 +915,20 @@ footer {
 
 @media(prefers-reduced-motion:reduce){
   .extras-info > *{animation:none;}
+}
+
+/* Poster fades in just after the text starts */
+@keyframes posterIn{
+  from{opacity:0; transform:translateY(14px) scale(.98);}
+  to{opacity:1; transform:none;}
+}
+.hero-poster{
+  animation:posterIn .8s var(--ease) backwards;
+  animation-delay:.45s;
+}
+@media(max-width:900px){
+  .hero-poster{animation-delay:.3s;}  
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-poster{animation:none;}
 }
