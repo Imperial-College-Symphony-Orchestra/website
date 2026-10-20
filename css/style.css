@@ -894,7 +894,7 @@ footer {
   .hero-extras{flex-direction:column; gap:18px; padding:24px 28px 64px;}  /* 64px clears arrows and dots */
   .hero-poster{order:1; height:auto; width:min(230px,60vw);}
   .extras-info{order:2; max-width:none;}
-  .extras-info > :not(.btn){display:none;}
+  .extras-info > :not(.btn):not(.extras-price){display:none;}
   .btn-buy{font-size:.95rem; padding:12px 28px;}
 }
 
@@ -931,4 +931,22 @@ footer {
 }
 @media(prefers-reduced-motion:reduce){
   .hero-poster{animation:none;}
+}
+
+@media(max-width:900px){
+  .extras-info{text-align:center;}
+  .extras-price{margin:0 0 14px; font-size:.85rem; line-height:1.45;}
+  .btn-buy{white-space:normal; text-align:center; font-size:.9rem; padding:12px 22px;} /* long button text can wrap on very narrow phones */
+  .hero-poster{width:min(210px,56vw);}   /* slightly smaller to make room for the prices */
+  #heroCarousel{min-height:540px;}       /* poster + prices + button need a little more height */
+}
+
+.extras-info > :nth-child(6){animation-delay:calc(var(--d) + .6s);}  /* fade-in for the button, if you don't already have it */
+
+/* Phone/tablet: bigger poster, more space before the prices and button */
+@media(max-width:900px){
+  .hero-poster{width:min(240px,64vw);}      /* was 210px / 56vw */
+  .hero-extras{gap:26px;}                    /* was 18px: pushes the prices and button down */
+  .extras-info{margin-top:6px;}              /* extra nudge */
+  #heroCarousel{min-height:600px;}           /* was 540px: the taller poster needs the room */
 }
