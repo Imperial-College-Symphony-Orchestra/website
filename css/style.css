@@ -894,7 +894,6 @@ footer {
   .hero-extras{flex-direction:column; gap:18px; padding:24px 28px 64px;}  /* 64px clears arrows and dots */
   .hero-poster{order:1; height:auto; width:min(230px,60vw);}
   .extras-info{order:2; max-width:none;}
-  .extras-info > :not(.btn):not(.extras-price){display:none;}
   .btn-buy{font-size:.95rem; padding:12px 28px;}
 }
 
@@ -949,4 +948,64 @@ footer {
   .hero-extras{gap:26px;}                    /* was 18px: pushes the prices and button down */
   .extras-info{margin-top:6px;}              /* extra nudge */
   #heroCarousel{min-height:600px;}           /* was 540px: the taller poster needs the room */
+}
+
+/* Phone/tablet: use the slide's own text (like the other slides) + prices + button */
+@media(max-width:900px){
+  .hero-poster{display:none;}
+
+  /* Show the slide's own eyebrow, heading and paragraph again */
+  #heroCarousel .wrap:has(> .hero-extras) > :not(.hero-extras){display:block !important;}
+
+  /* The extras block becomes a normal part of the column, under the text */
+  .hero-extras{position:static; inset:auto; display:block; padding:0; margin-top:20px;}
+  .extras-info{width:100%; max-width:none; margin:0; text-align:center;}
+
+  /* Hide my duplicate text; keep only the prices and the button */
+  .extras-info > :not(.btn):not(.extras-price):not(.extras-prog){display:none;}
+  .extras-price{font-size:1.05rem; line-height:1.5; color:#EDE6D2; margin:0 0 16px;}
+  .btn-buy{display:block; text-align:center; white-space:normal; font-size:.9rem; padding:14px 20px;}
+
+  #heroCarousel{min-height:600px;}
+}
+
+/* Phone/tablet: composer list with the brass bar, centred as a block */
+@media(max-width:900px){
+  .extras-info > .extras-prog{
+    display:block;
+    width:fit-content; max-width:100%;
+    margin:0 auto 18px;               /* centred block, bar hugs the list */
+    text-align:left;
+    font-size:.95rem; line-height:1.5;
+  }
+  .hero-extras{margin-top:16px;}
+
+  /* Keep the button clear of the arrows and dots */
+  #heroCarousel .wrap:has(> .hero-extras){padding-bottom:72px;}
+  #heroCarousel{min-height:680px;}
+}
+
+/* Phone/tablet: ticket text sized like the composer list (no bar) */
+@media(max-width:900px){
+  .extras-price{font-size:.95rem; line-height:1.5; color:#EDE6D2; margin:0 0 18px;}
+  .extras-price b{color:#fff; font-weight:600;}
+}
+
+/* Slide 1 on phones: eyebrow, title and venue rise in just before the composers, prices and button */
+@media(max-width:900px){
+  #heroCarousel .wrap:has(> .hero-extras) > :is(.eyebrow,h1,.lede){
+    visibility:visible !important;
+    animation:extrasIn .6s var(--ease) backwards;
+  }
+  #heroCarousel .wrap:has(> .hero-extras) > .eyebrow{animation-delay:.3s;}
+  #heroCarousel .wrap:has(> .hero-extras) > h1{animation-delay:.42s;}
+  #heroCarousel .wrap:has(> .hero-extras) > .lede{animation-delay:.54s;}
+
+  /* switch off the per-word reveal on this slide so the two effects don't fight */
+  #heroCarousel .wrap:has(> .hero-extras) .word{
+    opacity:1 !important; transform:none !important; transition:none !important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #heroCarousel .wrap:has(> .hero-extras) > :is(.eyebrow,h1,.lede){animation:none;}
 }
