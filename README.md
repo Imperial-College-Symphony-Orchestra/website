@@ -27,3 +27,11 @@ pip install pillow
 python scripts/optimise_images.py --update-pages
 ```
 This makes the WebP copy at the right size for how the page uses it and points the page at it. Commit both the page and the new file in `assets/webp/`.
+
+## Concerts and ticket links
+
+Anything that should disappear after a concert can carry the concert date, and the site removes it automatically from the next day (visitor's local time):
+- On the Concerts page, put `data-until="YYYY-MM-DD"` on the element wrapping the Buy tickets button, e.g. `<div class="concert-tickets" data-until="2026-11-22">`.
+- On the home page, give the concert's hero slide in `index.html` an `until:'YYYY-MM-DD'` field. The slide drops out of the carousel after that date.
+
+When the next concert goes on the home page, also update the two `<link rel="preload">` lines at the top of `index.html` to its slide image and poster.

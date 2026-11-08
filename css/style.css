@@ -37,6 +37,18 @@ img{max-width:100%;height:auto;display:block;}  /* height:auto keeps the width/h
 /* Concert posters: one frame for every poster so captions line up, nothing cropped */
 .poster-link{display:block;}
 .poster{width:100%;height:auto;aspect-ratio:1/1.414;object-fit:contain;background:var(--paper-dim);border:1px solid var(--line);}
+
+/* Concerts page */
+.year-nav{margin-bottom:48px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:24px;}
+.year-nav-label{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--ink);}
+.year-nav a{text-decoration:none;color:var(--brass);font-weight:700;}
+.season-title{font-size:1.8rem;text-align:left;text-decoration:none;scroll-margin-top:100px;margin-bottom:16px;font-weight:bold;}
+.season{margin-bottom:56px;}
+.concert-info{margin-top:8px;font-size:.82rem;line-height:1.4;color:var(--ink-soft);}
+.concert-info b{color:var(--ink);}
+.concert-info ul{margin:4px 0 0;padding-left:18px;}
+.concert-tickets{text-align:center;margin-top:16px;}
+.concert-tickets .btn{display:block;font-size:1.1rem;padding:14px 24px;letter-spacing:.06em;text-transform:uppercase;}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 28px;}
 .eyebrow{
   font-family:'Source Sans 3',sans-serif;

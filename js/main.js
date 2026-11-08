@@ -1,3 +1,15 @@
+// ---- Date-limited content ----
+// data-until="YYYY-MM-DD" on any element (or `until` on a home hero slide) is the last day it shows,
+// in the visitor's local time. From the next day it is removed, e.g. Buy tickets buttons after a concert.
+function icsoExpired(until) {
+  if (!until) return false;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(until);
+  if (!m) { console.warn('Ignoring badly formatted date (use YYYY-MM-DD):', until); return false; }
+  return Date.now() >= new Date(+m[1], +m[2] - 1, +m[3] + 1).getTime();
+}
+window.icsoExpired = icsoExpired;
+document.querySelectorAll('[data-until]').forEach(el => { if (icsoExpired(el.dataset.until)) el.remove(); });
+
 // ---- Mobile nav toggle ----
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('navToggle');
@@ -198,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ---- Home page: hero carousel ----
 document.addEventListener('DOMContentLoaded', () => {
   const heroSection = document.getElementById('heroCarousel');
-  if (!heroSection || !window.__heroSlides) return;
+  if (!heroSection || !window.__heroSlides || !window.__heroSlides.length) return;
   const heroSlides = window.__heroSlides;
 
   let heroIndex = 0;
