@@ -18,3 +18,12 @@ Then, go to a browser and open http://localhost:3000
 ## The website
 
 As of August 2026, the current website URL is https://icso.uk/. Note that this may be subject to change in future years.
+
+## Images
+
+Pages use smaller WebP copies from `assets/webp/`, made from the originals in `assets/` (which are never changed). To add a photo or poster, put the original in `assets/`, reference it in the page as `/assets/your-file.jpg`, then run:
+```
+pip install pillow
+python scripts/optimise_images.py --update-pages
+```
+This makes the WebP copy at the right size for how the page uses it and points the page at it. Commit both the page and the new file in `assets/webp/`.
