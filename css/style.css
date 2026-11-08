@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Sans+3:wght@400;500;600;700&display=swap');
-
 :root{
   --ink:#101E2B;
   --ink-soft:#1C3247;
@@ -280,18 +278,31 @@ nav.main a:hover,nav.main a[aria-current="page"]{color:var(--brass-light);}
   transform:translateX(-50%);
   z-index:3;
   display:flex;
+  align-items:center;
   gap:8px;
   margin:0;
 }
-#heroDots span{
+#heroDots button{
   width:9px;height:9px;
+  padding:0;border:0;
   border-radius:50%;
   background:rgba(255,255,255,.4);
   cursor:pointer;
   display:block;
   transition:background .2s ease, transform .2s ease;
 }
-#heroDots span.active{background:var(--brass);transform:scale(1.25);}
+#heroDots button[aria-current="true"]{background:var(--brass);transform:scale(1.25);}
+#heroDots button:focus-visible{outline:2px solid var(--brass-light);outline-offset:3px;}
+#heroDots #heroPause{
+  width:24px;height:24px;margin-left:6px;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;
+  background:rgba(16,30,43,.5);
+  border:1px solid rgba(255,255,255,.4);
+}
+@media (hover:hover) and (pointer:fine){
+  #heroDots #heroPause:hover{background:rgba(16,30,43,.8);border-color:var(--brass-light);}
+}
 
 /* ---- Buttons ---- */
 .btn{
@@ -309,6 +320,7 @@ nav.main a:hover,nav.main a[aria-current="page"]{color:var(--brass-light);}
 /* ---- Sections ---- */
 section{padding:64px 0;}
 section.tight{padding:30px 0;}
+section.reduce-spacing-top{padding-top:0;}  /* follow-on section: the previous section's bottom padding is the gap */
 .section-head{max-width:60ch;margin-bottom:10px;}
 .divider{height:1px;background:var(--line);border:0;margin:0;}
 .card{background:#fff;border:1px solid var(--line);padding:26px;border-radius:var(--radius);transition:transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);}
@@ -774,25 +786,32 @@ img{
 
 .read-more-btn {
   display: none;
+  background: none;
+  border: 0;
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }
 
+/* Home page cards only: clamp on phones with a Read more toggle */
 @media (max-width: 768px) {
-  .card p:nth-of-type(2) {
+  .card.collapsible p:nth-of-type(2) {
     display: -webkit-box;
     -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
-  .card p:nth-of-type(n+3) {
+
+  .card.collapsible p:nth-of-type(n+3) {
     display: none;
   }
 
-  .card.expanded p:nth-of-type(2) {
+  .card.collapsible.expanded p:nth-of-type(2) {
     -webkit-line-clamp: unset;
   }
-  
-  .card.expanded p:nth-of-type(n+3) {
+
+  .card.collapsible.expanded p:nth-of-type(n+3) {
     display: block;
   }
 
