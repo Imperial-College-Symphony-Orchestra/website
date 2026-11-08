@@ -32,7 +32,11 @@ h1,h2,h3,.display{
   margin:0 0 .4em;
 }
 a{color:inherit;}
-img{max-width:100%;display:block;}
+img{max-width:100%;height:auto;display:block;}  /* height:auto keeps the width/height attributes from stretching images */
+
+/* Concert posters: one frame for every poster so captions line up, nothing cropped */
+.poster-link{display:block;}
+.poster{width:100%;height:auto;aspect-ratio:1/1.414;object-fit:contain;background:var(--paper-dim);border:1px solid var(--line);}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 28px;}
 .eyebrow{
   font-family:'Source Sans 3',sans-serif;
