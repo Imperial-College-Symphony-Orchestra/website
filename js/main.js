@@ -216,14 +216,24 @@ document.addEventListener('DOMContentLoaded', () => {
   activeWrap.querySelectorAll('.eyebrow, h1, .lede').forEach(node => window.revealWords(node, introDelay));
   inactiveWrap.style.transform = 'translateX(9999px)';
 
-  heroSlides.forEach((_, i) => {
-    const dot = document.createElement('span');
-    if (i === 0) dot.classList.add('active');
-    dot.addEventListener('click', () => { if (i !== heroIndex) showHero(i, i > heroIndex ? 1 : -1); });
+  const plainText = html => { const d = document.createElement('div'); d.innerHTML = html; return d.textContent.trim(); };
+  const dots = heroSlides.map((s, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Show slide ${i + 1}: ${plainText(s.title)}`);
+    if (i === 0) { dot.classList.add('active'); dot.setAttribute('aria-current', 'true'); }
+    dot.addEventListener('click', () => {
+      if (i !== heroIndex && showHero(i, i > heroIndex ? 1 : -1)) restartAuto();
+    });
     heroDots.appendChild(dot);
+    return dot;
   });
 
+  // Returns false (and does nothing) while a slide transition is still running
+  let animating = false;
   function showHero(i, direction = 1) {
+    if (animating) return false;
+    animating = true;
     heroIndex = (i + heroSlides.length) % heroSlides.length;
     const s = heroSlides[heroIndex];
     const dist = heroSection.offsetWidth;
@@ -256,16 +266,61 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       [activeBg, inactiveBg] = [inactiveBg, activeBg];
       [activeWrap, inactiveWrap] = [inactiveWrap, activeWrap];
+      animating = false;
     }, 400);
 
-    [...heroDots.children].forEach((d, idx) => d.classList.toggle('active', idx === heroIndex));
+    dots.forEach((d, idx) => {
+      const on = idx === heroIndex;
+      d.classList.toggle('active', on);
+      if (on) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current');
+    });
+    return true;
   }
 
-  document.getElementById('heroPrev').addEventListener('click', () => showHero(heroIndex - 1, -1));
-  document.getElementById('heroNext').addEventListener('click', () => showHero(heroIndex + 1, 1));
+  // ---- Auto-advance: every 7s; paused on hover, by the pause button, or by prefers-reduced-motion ----
+  const INTERVAL = 7000;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let auto = null;
+  let hovering = false;
+  let userPaused = reducedMotion.matches;
 
-  // auto-advance every 7s, pausing on hover
-  let auto = setInterval(() => showHero(heroIndex + 1, 1), 10000);
-  heroSection.addEventListener('mouseenter', () => clearInterval(auto));
-  heroSection.addEventListener('mouseleave', () => { auto = setInterval(() => showHero(heroIndex + 1, 1), 7000); });
+  function stopAuto() { clearInterval(auto); auto = null; }
+  function startAuto() {
+    stopAuto();
+    if (userPaused || hovering) return;
+    auto = setInterval(() => showHero(heroIndex + 1, 1), INTERVAL);
+  }
+  const restartAuto = startAuto;
+
+  const iconPause = '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>';
+  const iconPlay = '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><polygon points="7 5 19 12 7 19"/></svg>';
+  const pauseBtn = document.createElement('button');
+  pauseBtn.type = 'button';
+  pauseBtn.id = 'heroPause';
+  function syncPauseBtn() {
+    pauseBtn.innerHTML = userPaused ? iconPlay : iconPause;
+    pauseBtn.setAttribute('aria-label', userPaused ? 'Play slideshow' : 'Pause slideshow');
+    pauseBtn.setAttribute('aria-pressed', userPaused);
+  }
+  pauseBtn.addEventListener('click', () => {
+    userPaused = !userPaused;
+    syncPauseBtn();
+    startAuto();
+  });
+  heroDots.appendChild(pauseBtn);
+  syncPauseBtn();
+
+  reducedMotion.addEventListener?.('change', e => {
+    userPaused = e.matches;
+    syncPauseBtn();
+    startAuto();
+  });
+
+  document.getElementById('heroPrev').addEventListener('click', () => { if (showHero(heroIndex - 1, -1)) restartAuto(); });
+  document.getElementById('heroNext').addEventListener('click', () => { if (showHero(heroIndex + 1, 1)) restartAuto(); });
+
+  heroSection.addEventListener('mouseenter', () => { hovering = true; stopAuto(); });
+  heroSection.addEventListener('mouseleave', () => { hovering = false; startAuto(); });
+
+  startAuto();
 });

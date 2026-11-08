@@ -59,19 +59,19 @@
 
   <section class="tight">
     <div class="wrap grid grid-feature">
-      <div class="card reveal">
+      <div class="card collapsible reveal">
         <p class="eyebrow">Est. 1948</p>
         <h3 style="font-size:1.3rem;"><span id="icsoYears" data-founded="1948">0</span> years as Imperial's flagship orchestra</h3>
         <p>Conducted by Oliver Gooch, the Imperial College Symphony Orchestra (ICSO) has served as the flagship orchestra of Imperial College London since 1948. Being in the UK's only exclusively STEMB university, ICSO offers a fully auditioned, premier creative outlet for dedicated Imperial musicians, some of whom hold full Ash scholarships for lessons at the Royal College of Music. The orchestra delivers impactful, high-calibre performances to sold-out audiences across London, while also attracting interest abroad on international tours - most recently to Belgium in June 2026. Highlights from 2025-26 range from concertos by Dvořák (Robyn Liu, cello) and Korngold (Kaelyn Soh, violin), to Tchaikovsky's <i>Romeo and Juliet Fantasy Overture</i>, Shostakovich's <i>Symphony No. 9</i>, and Britten's monumental <i>War Requiem</i> in Windsor Castle, before HRH The Duke of Edinburgh and the German Ambassador to the UK.</p>
         <img src="/assets/strings-rach-prok-2025.jpg" alt="ICSO performing in concert" class="feature-card-photo">
       </div>
-      <div class="card reveal">
+      <div class="card collapsible reveal">
         <p class="eyebrow">Prizes</p>
         <h3 style="font-size:1.3rem;">Awards and recognition</h3>
         <p>Having won "Universiy Orchestra of the Year" (2008) and with a BAFTA-awarded TV debut on Channel 4 (2002), ICSO is widely regarded as one of the finest university orchestras in the UK.</p>
         <p>ICSO's recognition has also been highlighted in the words of Daniel Jemison (LSO Principal Bassoon), who has previously described ICSO as sounding "like a professional orchestra".</p>
       </div>
-      <div class="card reveal">
+      <div class="card collapsible reveal">
         <p class="eyebrow">In London and going abroad</p>
         <h3 style="font-size:1.3rem;">Cadogan Hall, London, and abroad</h3>
         <p>ICSO holds its annual Spring Concert at Cadogan Hall, a top orchestral venue and home of the RPO. Additionally, ICSO recently performed in Imperial's Great Hall, RCM's Amaryllis Fleming Hall, and Windsor Castle. International tours held by ICSO have also led the orchestra beyond the UK, to Spain, South Africa, Italy, Finland, Czechia, and Belgium.</p>
@@ -249,16 +249,18 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
-document.querySelectorAll('.card').forEach(card => {
-  const btn = document.createElement('div');
+document.querySelectorAll('.card.collapsible').forEach(card => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
   btn.className = 'read-more-btn';
+  btn.setAttribute('aria-expanded', 'false');
   btn.innerHTML = 'Read more ▼';
   card.appendChild(btn);
 
   card.addEventListener('click', function() {
-    this.classList.toggle('expanded');
-    const isExpanded = this.classList.contains('expanded');
-    this.querySelector('.read-more-btn').innerHTML = isExpanded ? 'Show less ▲' : 'Read more ▼';
+    const isExpanded = this.classList.toggle('expanded');
+    btn.setAttribute('aria-expanded', isExpanded);
+    btn.innerHTML = isExpanded ? 'Show less ▲' : 'Read more ▼';
   });
 });
 
