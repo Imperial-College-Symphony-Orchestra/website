@@ -1,3 +1,15 @@
+// ---- Date-limited content ----
+// data-until="YYYY-MM-DD" on any element (or `until` on a home hero slide) is the last day it shows,
+// in the visitor's local time. From the next day it is removed, e.g. Buy tickets buttons after a concert.
+function icsoExpired(until) {
+  if (!until) return false;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(until);
+  if (!m) { console.warn('Ignoring badly formatted date (use YYYY-MM-DD):', until); return false; }
+  return Date.now() >= new Date(+m[1], +m[2] - 1, +m[3] + 1).getTime();
+}
+window.icsoExpired = icsoExpired;
+document.querySelectorAll('[data-until]').forEach(el => { if (icsoExpired(el.dataset.until)) el.remove(); });
+
 // ---- Mobile nav toggle ----
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('navToggle');
@@ -89,19 +101,6 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
   overlay.addEventListener('click', finish);
 })();
 
-// ---- Bottom banner: stays fixed while scrolling, slides away once the real footer is reached ----
-(() => {
-  const banner = document.getElementById('stickyBanner');
-  const footer = document.getElementById('site-footer');
-  if (!banner || !footer) return;
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver(([entry]) => {
-      banner.classList.toggle('hide', entry.isIntersecting);
-    }, { threshold: 0 });
-    io.observe(footer);
-  }
-})();
-
 // ---- Split headings into words and fade/rise them in, staggered ----
 function splitWords(root) {
   if (root.dataset.split) return;
@@ -161,44 +160,10 @@ document.addEventListener('DOMContentLoaded', () => {
 window.splitWords = splitWords;
 window.revealWords = revealWords;
 
-// ---- Home page: video lazy-load on scroll into view ----
-document.addEventListener('DOMContentLoaded', () => {
-  const watchEl = document.getElementById('watchVideo');
-  if (!watchEl) return;
-  const id = watchEl.dataset.videoId;
-  const START = 5487;
-
-  watchEl.innerHTML = `
-    <iframe id="watchIframe" src="https://www.youtube.com/embed/${id}?enablejsapi=1&mute=1&start=${START}&rel=0" title="ICSO in concert" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    <button id="unmuteBtn" class="unmute-btn">🔇 Unmute</button>
-  `;
-  const iframe = document.getElementById('watchIframe');
-  const unmuteBtn = document.getElementById('unmuteBtn');
-  const post = (func, args = []) => iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
-
-  let started = false;
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !started) {
-        started = true;
-        post('seekTo', [START, true]);
-        post('playVideo');
-      }
-    });
-  }, { threshold: 0.5 });
-  observer.observe(watchEl);
-
-  unmuteBtn.addEventListener('click', () => {
-    post('unMute');
-    unmuteBtn.textContent = '🔊 Sound on';
-    unmuteBtn.disabled = true;
-  });
-});
-
 // ---- Home page: hero carousel ----
 document.addEventListener('DOMContentLoaded', () => {
   const heroSection = document.getElementById('heroCarousel');
-  if (!heroSection || !window.__heroSlides) return;
+  if (!heroSection || !window.__heroSlides || !window.__heroSlides.length) return;
   const heroSlides = window.__heroSlides;
 
   let heroIndex = 0;
