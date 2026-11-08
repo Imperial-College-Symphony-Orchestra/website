@@ -66,22 +66,26 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
 (() => {
   const overlay = document.getElementById('introOverlay');
   if (!overlay) return;
-  const seen = sessionStorage.getItem('icso_intro_shown');
-  if (seen) {
+  let seen = false;
+  try { seen = !!sessionStorage.getItem('icso_intro_shown'); } catch (e) {}
+  // Skip entirely if already shown this session or the visitor prefers reduced motion
+  if (seen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     overlay.remove();
     return;
   }
   document.body.classList.add('intro-lock');
+  let done = false;
   const finish = () => {
+    if (done) return;
+    done = true;
     overlay.classList.add('hide');
     document.body.classList.remove('intro-lock');
-    sessionStorage.setItem('icso_intro_shown', '1');
+    try { sessionStorage.setItem('icso_intro_shown', '1'); } catch (e) {}
     setTimeout(() => overlay.remove(), 700);
   };
-  const minTime = new Promise(r => setTimeout(r, 1650));
-  const ready = new Promise(r => window.addEventListener('load', r, { once: true }));
-  Promise.all([minTime, ready]).then(finish);
-  setTimeout(finish, 4000);
+  // Fixed length: just long enough for the logo, rule and tagline animations (they end at 1.6s).
+  // No longer waits for every image and the video to load.
+  setTimeout(finish, 1600);
   overlay.addEventListener('click', finish);
 })();
 
@@ -216,12 +220,27 @@ document.addEventListener('DOMContentLoaded', () => {
   activeWrap.querySelectorAll('.eyebrow, h1, .lede').forEach(node => window.revealWords(node, introDelay));
   inactiveWrap.style.transform = 'translateX(9999px)';
 
+  // Slide images load on demand: slide 1 is preloaded in the page head, the next slide is
+  // fetched once the page has loaded (and after each change), and any other slide as soon as
+  // the visitor points at or focuses the control that would show it.
+  const preloaded = new Set([heroSlides[0].img]);
+  function preloadSlide(i) {
+    const img = heroSlides[(i + heroSlides.length) % heroSlides.length].img;
+    if (preloaded.has(img)) return;
+    preloaded.add(img);
+    new Image().src = img;
+  }
+  const preloadNext = () => preloadSlide(heroIndex + 1);
+  if (document.readyState === 'complete') preloadNext();
+  else window.addEventListener('load', preloadNext, { once: true });
+
   const plainText = html => { const d = document.createElement('div'); d.innerHTML = html; return d.textContent.trim(); };
   const dots = heroSlides.map((s, i) => {
     const dot = document.createElement('button');
     dot.type = 'button';
     dot.setAttribute('aria-label', `Show slide ${i + 1}: ${plainText(s.title)}`);
     if (i === 0) { dot.classList.add('active'); dot.setAttribute('aria-current', 'true'); }
+    ['pointerenter', 'focus'].forEach(ev => dot.addEventListener(ev, () => preloadSlide(i)));
     dot.addEventListener('click', () => {
       if (i !== heroIndex && showHero(i, i > heroIndex ? 1 : -1)) restartAuto();
     });
@@ -267,6 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
       [activeBg, inactiveBg] = [inactiveBg, activeBg];
       [activeWrap, inactiveWrap] = [inactiveWrap, activeWrap];
       animating = false;
+      preloadNext();
     }, 400);
 
     dots.forEach((d, idx) => {
@@ -316,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startAuto();
   });
 
+  ['pointerenter', 'focus'].forEach(ev => document.getElementById('heroPrev').addEventListener(ev, () => preloadSlide(heroIndex - 1)));
   document.getElementById('heroPrev').addEventListener('click', () => { if (showHero(heroIndex - 1, -1)) restartAuto(); });
   document.getElementById('heroNext').addEventListener('click', () => { if (showHero(heroIndex + 1, 1)) restartAuto(); });
 
