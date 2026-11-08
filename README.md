@@ -35,3 +35,4 @@ Anything that should disappear after a concert can carry the concert date, and t
 - On the home page, give the concert's hero slide in `index.html` an `until:'YYYY-MM-DD'` field. The slide drops out of the carousel after that date.
 
 When the next concert goes on the home page, also update the two `<link rel="preload">` lines at the top of `index.html` to its slide image and poster.
+Also update the concert details in the `<script type="application/ld+json">` block near the top of `index.html` and `concerts.html`. It tells search engines about the concert, and its `data-until` removes it after the date like the ticket buttons.

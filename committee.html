@@ -4,11 +4,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Committee - Imperial College Symphony Orchestra</title>
 <meta name="description" content="Meet the elected ICSO committee.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Imperial College Symphony Orchestra">
+<meta property="og:url" content="https://icso.uk/committee">
+<meta property="og:title" content="Committee - Imperial College Symphony Orchestra">
+<meta property="og:description" content="Meet the elected ICSO committee.">
+<meta property="og:image" content="https://icso.uk/assets/icso-share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Imperial College Symphony Orchestra performing in concert">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Committee - Imperial College Symphony Orchestra">
+<meta name="twitter:description" content="Meet the elected ICSO committee.">
+<meta name="twitter:image" content="https://icso.uk/assets/icso-share.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&amp;family=Source+Sans+3:wght@400;500;600;700&amp;display=swap">
 <link rel="stylesheet" href="/css/style.css">
-<link rel="icon" type="image/png" href="/assets/icso-logo.jpg">
+<link rel="icon" type="image/jpeg" href="/assets/icso-logo.jpg">
 </head>
 <body data-page="committee">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -85,23 +98,8 @@ const palettes = [
   { bg:'#1C3247', text:'#F3EFE4', soft:'rgba(243,239,228,.72)', eyebrow:'#D8B778', border:'rgba(243,239,228,.15)' }, // ink-soft
   { bg:'#234055', text:'#F3EFE4', soft:'rgba(243,239,228,.74)', eyebrow:'#D8B778', border:'rgba(243,239,228,.16)' }, // slate blue
 ];
-// Assign one palette per card, capped at 3 uses of any colour
-// (with 11 cards and 3 colours, at least one repeat is guaranteed automatically)
-function assignPalettes(n, maxPerColour = 3) {
-  const counts = new Array(palettes.length).fill(0);
-  const assignment = [];
-  for (let i = 0; i < n; i++) {
-    let idx, attempts = 0;
-    do {
-      idx = Math.floor(Math.random() * palettes.length);
-      attempts++;
-    } while (counts[idx] >= maxPerColour && attempts < 200);
-    counts[idx]++;
-    assignment.push(palettes[idx]);
-  }
-  return assignment;
-}
-const cardPalettes = assignPalettes(committee.length);
+// One palette per card, cycling through them in order so the colours are the same on every visit
+const cardPalettes = committee.map((_, i) => palettes[i % palettes.length]);
 
 document.getElementById('committee').innerHTML = committee.map(([role, people], i) => {
   const p = cardPalettes[i];
