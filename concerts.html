@@ -151,12 +151,79 @@
     </div>
   </section>
 
-<section>
+<!-- Tabs: shown by main.js. Without JavaScript both sections simply show one after the other. -->
+<div class="concert-tabs-bar" hidden>
   <div class="wrap">
-    
+    <div class="concert-tabs" id="concertTabs" role="tablist" aria-label="Concerts">
+      <button type="button" class="concert-tab" role="tab" id="tab-upcoming" aria-controls="upcoming" aria-selected="true">Upcoming concerts</button>
+      <button type="button" class="concert-tab" role="tab" id="tab-past" aria-controls="past" aria-selected="false" tabindex="-1">Past concerts</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPCOMING CONCERTS: one <article class="concert-landing"> per concert.
+     data-until removes it the day after the concert; if none are left, the "no upcoming" message shows. -->
+<section class="concert-panel" id="upcoming" role="tabpanel" aria-labelledby="tab-upcoming">
+  <div class="wrap">
+
+    <article class="concert-landing" data-until="2026-11-22" aria-labelledby="rr-title">
+      <a class="landing-poster" href="/assets/2026-nov-romance-and-reverie-poster.jpeg" target="_blank" rel="noopener" aria-label="Open the Romance &amp; Reverie poster full size">
+        <img src="/assets/webp/2026-nov-romance-and-reverie-poster-800.webp" alt="Poster for Romance &amp; Reverie: Wagner, Elgar and Rachmaninoff, Sunday 22 November" width="800" height="1131">
+      </a>
+      <div class="landing-head">
+        <p class="eyebrow">Winter concert · November 2026</p>
+        <h2 class="landing-title" id="rr-title">Romance &amp; Reverie</h2>
+        <p class="landing-countdown" data-countdown="2026-11-22" hidden></p>
+      </div>
+
+      <dl class="landing-facts">
+        <div><dt>When</dt><dd>Sunday 22 November 2026<br>Doors 19:00 · Starts 19:30</dd></div>
+        <div><dt>Where</dt><dd>Amaryllis Fleming Hall<br>Royal College of Music</dd></div>
+        <div><dt>Conductor</dt><dd>Oliver Gooch</dd></div>
+      </dl>
+
+      <div class="landing-details">
+        <div>
+          <h3 class="landing-label">Programme</h3>
+          <ul class="landing-programme">
+            <li><span class="composer">Wagner</span>Prelude to Act I of Lohengrin</li>
+            <li><span class="composer">Elgar</span>Cello Concerto in E minor, Op. 85<span class="soloist">Benjamin Cummings, cello</span></li>
+            <li><span class="composer">Rachmaninoff</span>Symphony No. 2 in E minor, Op. 27</li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="landing-tickets">
+            <h3 class="landing-label">Tickets</h3>
+            <ul class="landing-tickets-list">
+              <li><span>Early bird tickets</span><span class="status">Sold out</span></li>
+              <li><span>Regular tickets</span><span class="status">Sold out</span></li>
+            </ul>
+            <p class="landing-tickets-note">There will be a limited number of on-the-day tickets available for purchase on the door.</p>
+            <!-- When tickets are on sale, use this instead of the two "Sold out" rows and the note:
+            <a class="btn" href="https://www.imperialcollegeunion.org/student-group-shop?groupId=126" target="_blank" rel="noopener">Buy tickets</a> -->
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <div class="no-upcoming" id="noUpcoming" hidden>
+      <p class="eyebrow">Upcoming concerts</p>
+      <h2>Our next concert will be announced soon</h2>
+      <p>Check out our <a href="https://www.instagram.com/icsorchestra/" target="_blank" rel="noopener">Instagram</a> for the latest updates.</p>
+      <button type="button" class="btn" data-show-tab="tab-past">See past concerts</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- PAST CONCERTS -->
+<section class="concert-panel" id="past" role="tabpanel" aria-labelledby="tab-past">
+  <div class="wrap">
+
     <div class="year-nav">
       <b class="year-nav-label">Jump to academic year:</b>
-      <a href="#year-2026-27">2026-27</a>
+      <a href="#year-2026-27" data-after="2026-11-22" hidden>2026-27</a>
       <a href="#year-2025-26">2025-26</a>
       <a href="#year-2024-25">2024-25</a>
       <a href="#year-2023-24">2023-24</a>
@@ -166,19 +233,18 @@
       <a href="#year-2018-19*">2018-19*</a> -->
     </div>
 
-    <!-- 2026-27 -->
+    <!-- 2026-27: data-after keeps this season out of Past concerts until the day after Romance & Reverie -->
+    <div data-after="2026-11-22" hidden>
     <h3 id="year-2026-27" class="season-title">2026-27</h3>
     <div class="grid cols-3 season">
       <div>
-        <a class="poster-link" href="/assets/2026-nov-romance-and-reverie-poster.jpeg" target="_blank" rel="noopener"><img class="poster" src="/assets/webp/2026-nov-romance-and-reverie-poster-800.webp" alt="Poster for Romance &amp; Reverie: Wagner, Elgar and Rachmaninoff, Sunday 22 November" width="800" height="1131"></a>
+        <a class="poster-link" href="/assets/2026-nov-romance-and-reverie-poster.jpeg" target="_blank" rel="noopener"><img class="poster" src="/assets/webp/2026-nov-romance-and-reverie-poster-800.webp" alt="Poster for Romance &amp; Reverie: Wagner, Elgar and Rachmaninoff, Sunday 22 November" width="800" height="1131" loading="lazy" decoding="async"></a>
         <div class="concert-info">
           <b>Amaryllis Fleming Hall (Royal College of Music), 22nd November 2026</b>
           <ul><li>Wagner: Prelude to Act I of Lohengrin</li><li>Elgar: Cello Concerto in E minor, Op. 85 <i>(Benjamin Cummings)</i></li><li>Rachmaninoff: Symphony No. 2 in E minor, Op. 27</li></ul>
         </div>
-        <!-- <div class="concert-tickets" data-until="2026-11-22">
-          <a class="btn" href="https://www.imperialcollegeunion.org/student-group-shop?groupId=126" target="_blank" rel="noopener">Buy tickets</a>
-        </div> -->
       </div>
+    </div>
     </div>
 
     <!-- 2025-26 -->
