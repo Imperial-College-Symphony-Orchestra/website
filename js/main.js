@@ -1,14 +1,92 @@
 // ---- Date-limited content ----
-// data-until="YYYY-MM-DD" on any element (or `until` on a home hero slide) is the last day it shows,
-// in the visitor's local time. From the next day it is removed, e.g. Buy tickets buttons after a concert.
+// data-until="YYYY-MM-DD" on any element (or `until` on a home hero slide) is the last day it shows.
+//   From the next day it is removed, e.g. Buy tickets buttons or an upcoming concert's landing section.
+// data-after="YYYY-MM-DD" is the opposite: the element (written with the `hidden` attribute) appears from
+//   the next day, e.g. a concert moving into Past concerts once it has happened.
+// data-countdown="YYYY-MM-DD" shows "In 6 days" / "Tomorrow" / "Today" (written with `hidden`).
+// All dates use the visitor's local time. To test, add ?today=YYYY-MM-DD to the page address.
+function icsoDay(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+  if (!m) { if (s) console.warn('Ignoring badly formatted date (use YYYY-MM-DD):', s); return null; }
+  return new Date(+m[1], +m[2] - 1, +m[3]);
+}
+function icsoNow() {
+  const fake = icsoDay(new URLSearchParams(location.search).get('today'));
+  return fake ? fake.getTime() + 12 * 3600e3 : Date.now();   // a ?today= date counts as midday
+}
 function icsoExpired(until) {
-  if (!until) return false;
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(until);
-  if (!m) { console.warn('Ignoring badly formatted date (use YYYY-MM-DD):', until); return false; }
-  return Date.now() >= new Date(+m[1], +m[2] - 1, +m[3] + 1).getTime();
+  const d = icsoDay(until);
+  return !!d && icsoNow() >= new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1).getTime();
 }
 window.icsoExpired = icsoExpired;
 document.querySelectorAll('[data-until]').forEach(el => { if (icsoExpired(el.dataset.until)) el.remove(); });
+document.querySelectorAll('[data-after]').forEach(el => { el.hidden = !icsoExpired(el.dataset.after); });
+document.querySelectorAll('[data-countdown]').forEach(el => {
+  const day = icsoDay(el.dataset.countdown);
+  if (!day) return;
+  const now = new Date(icsoNow());
+  const days = Math.round((day - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 864e5);
+  const text = days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : days > 1 && days <= 60 ? `In ${days} days` : '';
+  if (text) { el.textContent = text; el.hidden = false; }
+});
+
+// ---- Concerts page: poster frames in each year take the shape of that year's tallest poster ----
+// (uses each poster's width/height attributes, so a newly added poster is picked up automatically)
+document.querySelectorAll('.season').forEach(season => {
+  let tallest = null;
+  season.querySelectorAll('img.poster').forEach(img => {
+    const w = +img.getAttribute('width'), h = +img.getAttribute('height');
+    if (w && h && (!tallest || h / w > tallest[1] / tallest[0])) tallest = [w, h];
+  });
+  if (tallest) season.style.setProperty('--poster-ratio', `${tallest[0]} / ${tallest[1]}`);
+});
+
+// ---- Concerts page: Upcoming / Past tabs (same page, Upcoming opens by default) ----
+(() => {
+  const list = document.getElementById('concertTabs');
+  if (!list) return;
+  const tabs = [...list.querySelectorAll('[role="tab"]')];
+  const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls')));
+
+  function select(i, focus) {
+    tabs.forEach((t, j) => {
+      const on = i === j;
+      t.setAttribute('aria-selected', on);
+      t.tabIndex = on ? 0 : -1;
+      panels[j].hidden = !on;
+    });
+    if (focus) tabs[i].focus();
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(i));
+    t.addEventListener('keydown', e => {
+      const last = tabs.length - 1;
+      const next = { ArrowRight: i === last ? 0 : i + 1, ArrowLeft: i === 0 ? last : i - 1, Home: 0, End: last }[e.key];
+      if (next !== undefined) { e.preventDefault(); select(next, true); }
+    });
+  });
+  document.querySelectorAll('[data-show-tab]').forEach(b => b.addEventListener('click', () => {
+    const i = tabs.findIndex(t => t.id === b.dataset.showTab);
+    if (i >= 0) { select(i, true); list.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+  }));
+
+  // Nothing upcoming (e.g. the day after a concert): show the message instead of an empty tab
+  const empty = document.getElementById('noUpcoming');
+  if (empty && panels[0] && !panels[0].querySelector('.concert-landing')) empty.hidden = false;
+
+  // Upcoming opens by default; a link to something in another tab (e.g. /concerts#year-2023-24) opens that tab
+  function openForHash(onLoad) {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = id && document.getElementById(id);
+    const i = target ? panels.findIndex(p => p && p.contains(target)) : -1;
+    if (i < 0) { if (onLoad) select(0); return; }   // e.g. #main from the skip link: leave the tabs alone
+    select(i);
+    if (target !== panels[i]) target.scrollIntoView();
+  }
+  list.closest('[hidden]')?.removeAttribute('hidden');   // tabs only appear when this script runs
+  openForHash(true);
+  window.addEventListener('hashchange', () => openForHash(false));
+})();
 
 // ---- Mobile nav toggle ----
 document.addEventListener('DOMContentLoaded', () => {

@@ -30,9 +30,16 @@ This makes the WebP copy at the right size for how the page uses it and points t
 
 ## Concerts and ticket links
 
-Anything that should disappear after a concert can carry the concert date, and the site removes it automatically from the next day (visitor's local time):
-- On the Concerts page, put `data-until="YYYY-MM-DD"` on the element wrapping the Buy tickets button, e.g. `<div class="concert-tickets" data-until="2026-11-22">`.
+The Concerts page has two tabs on the same page: **Upcoming concerts** (always shown first) and **Past concerts**. Dates use the visitor's local time:
+- Each upcoming concert is an `<article class="concert-landing" data-until="YYYY-MM-DD">` in the Upcoming section of `concerts.html`. Copy the existing one for the next concert. `data-until` removes it the day after the concert; when none are left, an "announced soon" message shows instead.
+- Put the same concert in Past concerts inside `<div data-after="YYYY-MM-DD" hidden>` (and its year link with `data-after` too). It appears there automatically the day after the concert.
+- `data-countdown="YYYY-MM-DD"` shows "In 6 days", "Tomorrow" or "Today".
+- To check how a page will look on another day, add `?today=YYYY-MM-DD` to the address, e.g. `/concerts?today=2026-11-23`.
 - On the home page, give the concert's hero slide in `index.html` an `until:'YYYY-MM-DD'` field. The slide drops out of the carousel after that date.
 
 When the next concert goes on the home page, also update the two `<link rel="preload">` lines at the top of `index.html` to its slide image and poster.
 Also update the concert details in the `<script type="application/ld+json">` block near the top of `index.html` and `concerts.html`. It tells search engines about the concert, and its `data-until` removes it after the date like the ticket buttons.
+
+## Testing locally
+
+Run `python scripts/serve.py` and open http://localhost:8000 (addresses like `/concerts` work, and nothing is cached). Add `--phone` to open it from a phone on the same Wi-Fi.
